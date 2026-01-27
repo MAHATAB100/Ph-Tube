@@ -20,6 +20,13 @@ const loadvideos = () =>{
     .then((data)=> displayVideos(data.videos))
     .catch((error)=> console.log(error));
 };
+const loadCategoriesVideos = (id) =>{
+//  alert(id);
+ fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res)=> res.json())
+    .then((data)=> displayVideos(data.category))
+    .catch((error)=> console.log(error));
+};
 // const cardDemo = {
 //     "category_id": "1001",
 //     "video_id": "aaad",
@@ -41,6 +48,23 @@ const loadvideos = () =>{
 
 const displayVideos = (videos) =>{
    const videoContainer = document.getElementById('videos');
+   videoContainer.innerHTML="";
+
+   if(videos.length == 0){
+    videoContainer.classList.remove("grid");
+    videoContainer.innerHTML=`
+    <div class = "min-h-[300px]  flex flex-col gap-5 justify-center items-center">
+    <img src ="assets/Icon.png" />
+    <h2 class ="text-center text-xl font-bold">
+    No Content here in this category
+    </h2>
+    </div>
+    `;
+    return;
+   } else {
+      videoContainer.classList.add("grid");
+    }
+   
 
   videos.forEach((video) =>{
     console.log(video);
@@ -56,7 +80,7 @@ const displayVideos = (videos) =>{
       ${
            video.others.posted_date?.length==0
            ? ""
-           : `<span class ="absolute right-2 bottom-2 bg-black text-white rounded p-1">${getTimeString(video.others.posted_date)}</span>`
+           : `<span class ="absolute text-xs right-2 bottom-2 bg-black text-white rounded p-1">${getTimeString(video.others.posted_date)}</span>`
       }
       
   </figure>
@@ -91,11 +115,17 @@ const displayCategories = (categories) =>{
 
   categories.forEach((item)=>{
     console.log(item);
-    const button =document.createElement("button")
-    button.classList='btn';
-    button.innerText=item.category;
+    const buttonContainer =document.createElement("div");
+    buttonContainer.innerHTML=`
+    <button onclick ="loadCategoriesVideos(${item.category_id})" class="btn">
+    ${item.category}
 
-    categoryContainer.append(button);
+    </button>
+    `;
+    // button.classList='btn';
+    // button.innerText=item.category;
+
+    categoryContainer.append(buttonContainer);
   });
 };
 
